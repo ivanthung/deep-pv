@@ -1,15 +1,15 @@
 ### MLFLOW configuration - - - - - - - - - - - - - - - - - - -
 
-MLFLOW_URI = "https://mlflow.lewagon.ai/"
-EXPERIMENT_NAME = "[NL] [Amsterdam] [Snowingg] Taxis + 1"
+# MLFLOW_URI =
+# EXPERIMENT_NAME =
 
 ### DATA & MODEL LOCATIONS  - - - - - - - - - - - - - - - - - - -
 
-PATH_TO_LOCAL_MODEL = 'model.joblib'
+# TODO PATH_TO_LOCAL_MODEL =
 
-BUCKET_TEST_DATA_PATH = "data/test.csv"
+# TODO BUCKET_TEST_DATA_PATH = "data/test.csv"
 
-PATH_TO_MODEL = 'models/taxifarepipe/model.joblib'
+# TODO PATH_TO_MODEL = 'models/taxifarepipe/model.joblib'
 
 
 ### GCP configuration - - - - - - - - - - - - - - - - - - -
@@ -39,10 +39,10 @@ BUCKET_NAME = 'wagon-data-907-deeppv'
 ##### Model - - - - - - - - - - - - - - - - - - - - - - - -
 
 # model folder name (will contain the folders for all trained model versions)
-MODEL_NAME = 'ChinaModel'
+MODEL_NAME = 'class_model'
 
 # model version folder name (where the trained model.joblib file will be stored)
-MODEL_VERSION = 'v1'
+# TODO MODEL_VERSION = 'v1'
 
 ### GCP AI Platform - - - - - - - - - - - - - - - - - - - -
 
