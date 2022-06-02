@@ -53,3 +53,10 @@ pypi_test:
 
 pypi:
 	@twine upload dist/* -u $(PYPI_USERNAME)
+
+##get data
+PACKAGE_NAME=DEEP-PV
+MODULE=get_data
+PACKAGE_NAME_API=deep_pv
+get_predict_image_gcp:
+	@python -m ${PACKAGE_NAME_API}.${MODULE}
