@@ -5,7 +5,7 @@
 
 ### DATA & MODEL LOCATIONS  - - - - - - - - - - - - - - - - - - -
 
-# TODO PATH_TO_LOCAL_MODEL =
+# TODO PATH_TO_LOCAL_MODEL = Create local model?
 
 # TODO BUCKET_TEST_DATA_PATH = "data/test.csv"
 
@@ -18,7 +18,7 @@
 
 ### GCP Project - - - - - - - - - - - - - - - - - - - - - -
 
-# not required here
+PROJECT_ID = 'deeppv-351812'
 
 ### GCP Storage - - - - - - - - - - - - - - - - - - - - - -
 
