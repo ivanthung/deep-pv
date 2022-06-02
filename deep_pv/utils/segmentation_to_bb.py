@@ -5,7 +5,7 @@ def segmentation_to_bb():
     y = [ y_coord[1] for y_coord in coords]
 
     xmax = max(x)
-    xmin =
+    xmin = min(x)
     ymax = max(y)
     ymin = min(y)
     return (min(x), xmax, ymin, ymax)

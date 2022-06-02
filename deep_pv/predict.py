@@ -11,7 +11,7 @@ from tensorflow import expand_dims
 from tensorflow import nn
 #PATH_TO_LOCAL_MODEL = 'model.joblib'
 
-BUCKET_NAME = "wagon-data-907-ward"  # ⚠️ replace with project BUCKET NAME
+BUCKET_NAME = "wagon-data-907-deeppv"  # ⚠️ replace with project BUCKET NAME
 
 ## download model from GCP
 # def download_model(bucket=BUCKET_NAME):
