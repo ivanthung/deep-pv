@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import tensorflow.keras as keras
 import tensorflow.nn as nn
-from Class_Model.params import BUCKET_NAME, MODEL_NAME
+from deep_pv.params import BUCKET_NAME, MODEL_NAME
+import numpy as np
 
 app = FastAPI()
 
@@ -25,7 +26,7 @@ def predict(latitude, longitude):
     predict_path = f"gs://{BUCKET_NAME}/data/Rotterdam/PV Present/{latitude}_{longitude}.jpg"
     img = keras.utils.load_img(predict_path, target_size=(256, 256))
     img_array = keras.utils.img_to_array(img)
-    img_array = expand_dims(img_array, 0)
+    img_array = np.expand_dims(img_array, 0)
     # TODO: make sure this works.
     predictions = model.predict(img_array)
     score = nn.softmax(predictions[0])
