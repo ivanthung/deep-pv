@@ -60,3 +60,25 @@ MODULE=get_data
 PACKAGE_NAME_API=deep_pv
 get_predict_image_gcp:
 	@python -m ${PACKAGE_NAME_API}.${MODULE}
+# ----------------------------------
+#             USE API
+# ----------------------------------
+run_api:
+	uvicorn api.fast:app --reload
+
+# ----------------------------------
+#          HEROKU COMMANDS
+# ----------------------------------
+
+streamlit:
+	-@streamlit run app.py
+
+heroku_login:
+	-@heroku login
+
+heroku_create_app:
+	-@heroku create ${APP_NAME}
+
+deploy_heroku:
+	-@git push heroku master
+	-@heroku ps:scale web=1
