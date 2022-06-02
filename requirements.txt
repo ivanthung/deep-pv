@@ -32,4 +32,5 @@ memoized-property
 termcolor
 
 #app
+create-api
 streamlit
