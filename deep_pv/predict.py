@@ -1,14 +1,11 @@
 import os
 import pandas as pd
 import numpy as np
-from params import MODEL_NAME
 from google.cloud import storage
 from tensorflow.keras import models
 #from deep_pv.get_data import get_predict_image_gcp
 #from keras.applications.utils import load_img, img_to_array
-from tensorflow import keras
-from tensorflow import expand_dims
-from tensorflow import nn
+from tensorflow import keras, nn, expand_dims
 #PATH_TO_LOCAL_MODEL = 'model.joblib'
 
 BUCKET_NAME = "wagon-data-907-deeppv"  # ⚠️ replace with project BUCKET NAME
@@ -46,7 +43,7 @@ def download_model2(BUCKET_NAME):
 
 ## source model locally saved
 def get_model_locally():
-    model = models.load_model('model.pb')
+    model = models.load_model('models/class_model')
     return model
 
 ## predict model with imported model
@@ -54,19 +51,19 @@ def get_model_locally():
 def prediction(model, predict_path = '105.jpg'):
     img = keras.utils.load_img(predict_path, target_size=(256, 256))
     img_array = keras.utils.img_to_array(img)
-    img_array = expand_dims(img_array, 0)
+    img_array = expand_dims(img_array, axis = 0)
     # Create a batch
     predictions = model.predict(img_array)
     score = nn.softmax(predictions[0])
     decoder = {0:'less_0',1: 'less_10', 2:'less_5', 3:'more_10'}
     class_name = predictions.argmax(axis=-1)[0]
     class_name = decoder[class_name]
-    # print("max_score",np.argmax(score))
-    print("This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_name, 100 * np.max(score)))
-
+    print("max_score",np.argmax(score))
+    return "This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_name, 100 * np.max(score))
 
 
 
 if __name__ == '__main__':
-    model = download_model2(BUCKET_NAME)
-   # prediction(model, predict_path = '105.jpg')
+    # model = download_model2(BUCKET_NAME)
+    model = get_model_locally()
+    print(prediction(model, predict_path = '51.906771_4.451552.jpg'))
