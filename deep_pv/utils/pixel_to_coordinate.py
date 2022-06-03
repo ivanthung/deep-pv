@@ -30,11 +30,17 @@ def find_opposite_corners(tile, zoom = 21):
 ## function below requires image to have centre as centre of standard 512x512 zoom 21.
 
 def center_to_pixel(lat, long, x, y, size = 512, zoom = 21):
-  ## calculate box
-  box = deg2num(lat, long, zoom)
-  ## get corners of image
-  corners = find_opposite_corners(box, zoom)
-  ## calculate latitude and longitude
-  lat_y = (y/size)*(corners['bottom_right'][0] - corners['top_left'][0]) + corners['top_left'][0]
-  long_x = (x/size)*(corners['bottom_right'][1] - corners['top_left'][1]) + corners['top_left'][1]
-  return lat_y, long_x
+    """ Input:
+    lat: center coordinate
+    long: center coordinate
+    x: pixel coordinate x
+    y: pixel coordinate y
+    """
+
+    box = deg2num(lat, long, zoom)
+    ## get corners of image
+    corners = find_opposite_corners(box, zoom)
+    ## calculate latitude and longitude
+    lat_y = (y/size)*(corners['bottom_right'][0] - corners['top_left'][0]) + corners['top_left'][0]
+    long_x = (x/size)*(corners['bottom_right'][1] - corners['top_left'][1]) + corners['top_left'][1]
+    return lat_y, long_x
