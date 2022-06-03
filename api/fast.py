@@ -1,9 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import tensorflow.keras as keras
-import tensorflow.nn as nn
+from tensorflow import keras, nn, expand_dims
 from deep_pv.params import BUCKET_NAME, MODEL_NAME
+from deep_pv.predict import prediction, download_model2, get_model_locally
 import numpy as np
+from PIL import Image
+import cv2 as cv
+import requests
+from deep_pv.get_data import get_predict_image_gcp
+from google.cloud import storage
 
 app = FastAPI()
 
@@ -21,20 +26,17 @@ def index():
 
 @app.get("/predict")
 def predict(latitude, longitude):
-    # TODO: make choice select photograph.
-    model = keras.models.load_model(f"gs://{BUCKET_NAME}/models/{MODEL_NAME}")
-    predict_path = f"gs://{BUCKET_NAME}/data/Rotterdam/PV Present/{latitude}_{longitude}.jpg"
-    img = keras.utils.load_img(predict_path, target_size=(256, 256))
-    img_array = keras.utils.img_to_array(img)
-    img_array = np.expand_dims(img_array, 0)
-    # TODO: make sure this works.
-    predictions = model.predict(img_array)
-    score = nn.softmax(predictions[0])
-    class_name = model.predict_classes
-    return {
-        'latitude':latitude,
-        'longitude':longitude,
-        'shape':img_array.shape,
-        'class_name':class_name,
-        'confidence_interval':100 * np.max(score)
-    }
+    url = "https://maps.googleapis.com/maps/api/staticmap?"
+    picture = requests.get(url,params = {
+        'center':f'{round(float(latitude),2)},{round(float(longitude),2)}',
+        'zoom':21,
+        'size':'640x640',
+        'maptype':'satellite',
+        'key':'AIzaSyBYmLO0dOqMcbUPTv_A0vKF_DThu0PgK7o'
+    })
+    picture_stored = cv.cvtColor(cv.imdecode(np.asarray(bytearray(picture.content), dtype="uint8"),cv.IMREAD_COLOR), cv.COLOR_BGR2RGB)
+    im = Image.fromarray(picture_stored)
+    im.save(f'{latitude}_{longitude}.jpg')
+    model = get_model_locally()
+    answer = prediction(model, f'{latitude}_{longitude}.jpg')
+    return {'response': answer, 'picture': picture_stored.tolist()}
