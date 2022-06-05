@@ -29,7 +29,6 @@ google-cloud-storage
 mlflow
 s3fs
 fastapi
-
 uvicorn
 requests
 opencv-python
@@ -42,9 +41,6 @@ joblib
 memoized-property
 termcolor
 opencv-python
-uvicorn
-json
-
 
 # for coco-viewer
 scikit-image
