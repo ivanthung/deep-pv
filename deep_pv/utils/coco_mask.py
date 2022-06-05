@@ -13,7 +13,6 @@ def coco_to_mask(filename):
         mask.append(coco.annToMask(ann))
     return mask
 
-
 def close_contour(contour):
     if not np.array_equal(contour[0], contour[-1]):
         contour = np.vstack((contour, contour[0]))

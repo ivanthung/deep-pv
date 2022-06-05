@@ -61,8 +61,6 @@ def prediction(model, predict_path = '105.jpg'):
     print("max_score",np.argmax(score))
     return "This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_name, 100 * np.max(score))
 
-
-
 if __name__ == '__main__':
     # model = download_model2(BUCKET_NAME)
     model = get_model_locally()
