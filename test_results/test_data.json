@@ -1,0 +1,1 @@
+{"images":[{"height":512,"width":512,"id":1,"file_name":"51.912667_4.478559.jpg"}],"annotations":[{"iscrowd":0,"image_id":1,"bbox":[161,164,172,213],"segmentation":[[231,376,333,338,261,163,161,204]],"category_id":0,"id":1,"area":20299}],"categories":[{"id":0,"name":"1","supercategory":"1"}]}

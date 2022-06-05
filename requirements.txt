@@ -25,6 +25,7 @@ google-cloud-storage
 mlflow
 s3fs
 fastapi
+
 uvicorn
 requests
 opencv-python
@@ -36,7 +37,13 @@ six>=1.14
 joblib
 memoized-property
 termcolor
+opencv-python
+uvicorn
 
-#app
-streamlit
-geopy
+# for coco-viewer
+scikit-image
+pycocotools
+
+# geo packages
+geopandas
+shapely
