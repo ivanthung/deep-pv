@@ -38,3 +38,6 @@ pycocotools
 # geo packages
 geopandas
 shapely
+
+#cloud
+google.cloud
