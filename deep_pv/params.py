@@ -20,12 +20,14 @@ BUCKET_NAME = 'wagon-data-907-deeppv'
 # /!\ here you need to decide if you are going to train using the provided and uploaded data/train_1k.csv sample file
 # or if you want to use the full dataset (you need need to upload it first of course)
 BUCKET_TRAIN_DATA_PATH = 'data/Rotterdam/PV Present'
+BUCKET_TRAIN_DATA_CHINA = 'train_data/data/PV01/PV01_Rooftop_Brick/'
+BUCKET_TRAIN_DATA_CALI = 'train_data/data/Cali/cocofiles_all_stockton_balanced'
 
 ##### Training  - - - - - - - - - - - - - - - - - - - - - -
 IMG_SIZE = 256
 BATCH_SIZE = 16
-##### Model - - - - - - - - - - - - - - - - - - - - - - - -
 
+##### Model - - - - - - - - - - - - - - - - - - - - - - - -
 # model folder name (will contain the folders for all trained model versions)
 MODEL_NAME = 'class_model'
 # model version folder name (where the trained model.joblib file will be stored)
