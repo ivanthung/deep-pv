@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 def deg2num(lat_deg, lon_deg, zoom):
   lat_rad = math.radians(lat_deg)
@@ -44,3 +45,35 @@ def center_to_pixel(lat, long, x, y, size = 512, zoom = 21):
     lat_y = (y/size)*(corners['bottom_right'][0] - corners['top_left'][0]) + corners['top_left'][0]
     long_x = (x/size)*(corners['bottom_right'][1] - corners['top_left'][1]) + corners['top_left'][1]
     return lat_y, long_x
+
+def get_coords(lat_deg, lon_deg, zoom = 21, size = 30):
+  (x,y) = deg2num(lat_deg, lon_deg, zoom)
+  return (np.array([num2deg(x + i - size//2,
+                            y + j - size//2, zoom)
+                            for j in range(size)
+                            for i in range(size)])
+                            .reshape(size,size,2))
+
+
+def haversine_vectorized(start_lat,
+                         start_lon,
+                         end_lat,
+                         end_lon):
+    """
+        Calculate the great circle distance between two points
+        on the earth (specified in decimal degrees).
+        Vectorized version of the haversine distance for pandas df
+        Computes distance in kms
+    """
+
+    lat_1_rad, lon_1_rad = np.radians(start_lat.astype(float)),\
+        np.radians(start_lon.astype(float))
+    lat_2_rad, lon_2_rad = np.radians(end_lat.astype(float)),\
+        np.radians(end_lon.astype(float))
+    dlon = lon_2_rad - lon_1_rad
+    dlat = lat_2_rad - lat_1_rad
+
+    a = np.sin(dlat / 2.0) ** 2 + np.cos(lat_1_rad) * np.cos(lat_2_rad) *\
+        np.sin(dlon / 2.0) ** 2
+    c = 2 * np.arcsin(np.sqrt(a))
+    return 6371 * c

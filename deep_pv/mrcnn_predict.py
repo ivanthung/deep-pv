@@ -20,7 +20,7 @@ import numpy as np
 from google.cloud import storage
 from pathlib import Path
 
-ROOT_DIR = os.path.abspath('/Users/maryward/code/ivanthung_deep_pv/deep-pv/')
+ROOT_DIR = os.path.abspath('/home/tobyw/code/ivanthung/deep-pv/')
 os.chdir(ROOT_DIR)
 
 MRCNN_DIR = 'deep_pv/mrcnn'
@@ -30,7 +30,7 @@ MODEL_WEIGHTS_PATH = 'model_weights_path.h5'
 from get_data import get_predict_image_gcp
 import skimage
 
-BUCKET_NAME = "wagon-data-907-ward"
+BUCKET_NAME = "wagon-data-907-deeppv"
 BUCKET_TRAIN_DATA_PATH = "data/png/"
 
 #import items from the mrcnn model
@@ -109,8 +109,10 @@ def mrcnn_predict(model, file_name):
     r = results[0]
     visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], r['scores'], figsize=(5,5))
     print(r)
+    return r
 
 if __name__=='__main__':
     #download_model(BUCKET_NAME)
     # get_model_weights()
     model = mrcnn_instantiate()
+    mrcnn_predict(model, '51.906771_4.451552')
