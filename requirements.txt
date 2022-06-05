@@ -8,6 +8,9 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
+tensorflow==1.15
+h5py==2.10.0
+keras==2.1.6
 
 # tests/linter
 black
@@ -22,6 +25,12 @@ google-cloud-storage
 mlflow
 s3fs
 fastapi
+
+uvicorn
+requests
+opencv-python
+pydeck
+streamlit
 
 # utilities
 six>=1.14
