@@ -30,8 +30,8 @@ MODEL_WEIGHTS_PATH = 'model_weights_path.h5'
 from get_data import get_predict_image_gcp
 import skimage
 
-BUCKET_NAME = "wagon-data-907-ward"
-BUCKET_TRAIN_DATA_PATH = "data/png/"
+# BUCKET_NAME = "wagon-data-907-ward"
+# BUCKET_TRAIN_DATA_PATH = "data/png/"
 
 #import items from the mrcnn model
 
