@@ -10,6 +10,8 @@ import requests
 from deep_pv.get_data import get_predict_image_gcp
 from google.cloud import storage
 
+model = get_model_locally()
+
 app = FastAPI()
 
 app.add_middleware(
@@ -37,6 +39,6 @@ def predict(latitude, longitude):
     picture_stored = cv.cvtColor(cv.imdecode(np.asarray(bytearray(picture.content), dtype="uint8"),cv.IMREAD_COLOR), cv.COLOR_BGR2RGB)
     im = Image.fromarray(picture_stored)
     im.save(f'{latitude}_{longitude}.jpg')
-    model = get_model_locally()
+    # model = get_model_locally()
     answer = prediction(model, f'{latitude}_{longitude}.jpg')
     return {'response': answer, 'picture': picture_stored.tolist()}

@@ -51,8 +51,8 @@ def prediction_map(model, image_name):
       heat_score = heat_map_score[class_name]
       image_class.append(class_name)
       heat_score_list.append(heat_score)
-      result_statement = "This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_name, 100 * np.max(score))
-    return image_class, heat_score_list, result_statement
+    #   result_statement = "This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_name, 100 * np.max(score))
+    return image_class, heat_score_list#, result_statement
 
 def make_dataset(image_class, heat_score_list,lat, lon, image_name):
     image_dataset = pd.DataFrame({"image_name": image_name, "image_class": image_class , "heat_score_list":heat_score_list, "lat":lat, "lon":lon})

@@ -74,8 +74,9 @@ def mrcnn_predict(model, file_name):
     r = results[0]
     visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], r['scores'], figsize=(5,5))
     print(r)
+    return r
 
 if __name__ == '__main__':
     file_name ='51.906771_4.451552'
     model = mrcnn_instantiate()
-    mrcnn_predict(model, file_name)
+    mrcnn_predict(model, '51.906771_4.451552')
