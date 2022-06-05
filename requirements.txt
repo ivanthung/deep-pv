@@ -16,7 +16,6 @@ flake8
 pytest
 yapf
 
-
 # API
 gcsfs
 google-cloud-storage
@@ -35,3 +34,7 @@ uvicorn
 # for coco-viewer
 scikit-image
 pycocotools
+
+# geo packages
+geopandas
+shapely

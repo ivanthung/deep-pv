@@ -1,11 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
 from skimage import measure
 from pycocotools.coco import COCO
 from pycocotools import mask
-import os
-from utils.pixel_to_coordinate import center_to_pixel
+from deep_pv.utils.pixel_to_coordinate import center_to_pixel
+import geopandas as gpd
 
 def coco_to_mask(filename):
     coco = COCO(filename)
@@ -73,12 +72,16 @@ def test_cococoords(coco_coords, dims = (512, 512)):
 if __name__ == '__main__':
     ROOT_DIR = '/Users/ivanthung/code/ivanthung/deep-pv/'
     TEST_RESULTS = 'test_results/'
-    os.chdir(ROOT_DIR)
 
     mask = coco_to_mask(TEST_RESULTS + 'test_data.json')
     coco_list = mask_to_coco(mask[0])[0]
     coco_coords = coco_to_cococoords(coco_list)
+
     bb = get_bb(coco_coords)
     midpoint = get_midpoint_from_bb(bb)
     midpoint_real_coord = center_to_pixel(51.912667, 4.478559, midpoint[0], midpoint[1])
     print(midpoint_real_coord)
+    crs = {'init': 'epsg:4326'}
+    polygon = gpd.GeoDataFrame(index=[0], crs=crs, geometry=midpoint_real_coord)
+    polygon.to_file(filename='test_results/polygon_test.geojson', driver='GeoJSON')
+    polygon.to_file(filename='test_results/polygon_test.shp', driver="ESRI Shapefile")
