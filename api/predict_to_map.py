@@ -14,7 +14,7 @@ BUCKET_NAME = "wagon-data-907-deeppv"
 
 @st.cache
 def get_images_gcp(BUCKET_NAME): #change to include variable for filename
-    prefix = f'data/Rotterdam/PV Present/' #without coordinants
+    prefix = f'data/Rotterdam/PV_Present/' #without coordinants
     dl_dir = 'rotterdam_mary/'
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(BUCKET_NAME)
@@ -90,7 +90,7 @@ def make_map(image_dataset):
 
     #Render
     labeled_map = pdk.Deck(layers=[layer2], initial_view_state=initial_view_state)
-    return labeled_map
+    return st.pydeck_chart(labeled_map)
 
 
 
