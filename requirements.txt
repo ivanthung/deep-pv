@@ -8,9 +8,13 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
-tensorflow==1.15
 h5py==2.10.0
+tensorflow==1.15
+tensorflow-gpu==1.15.0
 keras==2.1.6
+clint
+crontab
+tablib
 
 # tests/linter
 black
@@ -39,10 +43,13 @@ memoized-property
 termcolor
 opencv-python
 uvicorn
+json
+
 
 # for coco-viewer
 scikit-image
 pycocotools
+Pillow==9.0.0
 
 # geo packages
 geopandas

@@ -66,10 +66,8 @@ PACKAGE_NAME=DEEP-PV
 
 MODULE=get_data
 PACKAGE_NAME=deep_pv
-LOCAL_PATH= /Users/ivanthung/code/ivanthung/deep-pv/deep_pv/data
+LOCAL_PATH= /Users/ivanthung/code/ivanthung/deep-pv/models/trained_weights
 BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
-
-
 
 set_project:
 	@gcloud config set project ${PROJECT_ID}
@@ -78,6 +76,9 @@ create_bucket:
 	@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
 
 upload_data:
+	@gsutil cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+
+upload_weights:
 	@gsutil cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
 
 run_locally:
