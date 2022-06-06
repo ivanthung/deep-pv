@@ -70,8 +70,10 @@ def mrcnn_instantiate():
     return model
 
 def mrcnn_predict(model, img):
-    img = get_predict_image_gcp(file_name)
+    # img = get_predict_image_gcp(file_name)
+    print(type(img))
     results = model.detect([img], verbose=1)
+
     r = results[0]
     visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], r['scores'], figsize=(5,5))
     print(r)
