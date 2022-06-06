@@ -17,7 +17,6 @@ def coco_to_mask(filename):
         mask.append(coco.annToMask(ann))
     return mask
 
-
 if __name__ == '__main__':
     ROOT_DIR = '/Users/ivanthung/code/ivanthung/deep-pv/'
     TEST_RESULTS = 'test_results/'

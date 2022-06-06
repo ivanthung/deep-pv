@@ -73,14 +73,17 @@ if __name__ == '__main__':
     TEST_RESULTS = 'test_results/'
 
     mask = coco_to_mask(TEST_RESULTS + 'test_data.json')
+
     coco_list = mask_to_coco(mask[0])[0]
     coco_coords = coco_to_cococoords(coco_list)
-
     bb = get_bb(coco_coords)
     midpoint = get_midpoint_from_bb(bb)
     midpoint_real_coord = center_to_pixel(51.912667, 4.478559, midpoint[0], midpoint[1])
+
+
     print(midpoint_real_coord)
     crs = {'init': 'epsg:4326'}
     polygon = gpd.GeoDataFrame(index=[0], crs=crs, geometry=midpoint_real_coord)
+
     polygon.to_file(filename='test_results/polygon_test.geojson', driver='GeoJSON')
     polygon.to_file(filename='test_results/polygon_test.shp', driver="ESRI Shapefile")

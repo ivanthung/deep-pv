@@ -120,6 +120,9 @@ run_api:
 streamlit:
 	-@streamlit run app.py
 
+streamlit_test:
+	-@streamlit run app_test.py
+
 heroku_login:
 	-@heroku login
 
