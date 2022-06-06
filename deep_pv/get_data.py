@@ -42,6 +42,15 @@ def download_weights():
 
     return (WEIGHTS_PATH + download_name)
 
+def upload_to_gcp(image, filename, image_type = 'jpg'):
+    client = storage.Client()
+    blob_path = f'{BUCKET_TRAIN_DATA_PATH}/{filename}.{image_type}'
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(blob_path)
+    img_byte_array = BytesIO()
+    image.save(img_byte_array, format='JPEG')
+    blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
+
 if __name__ =="__main__":
 
     print(download_weights())

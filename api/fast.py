@@ -8,10 +8,11 @@ import numpy as np
 from PIL import Image
 import cv2 as cv
 import requests
-from deep_pv.get_data import get_predict_image_gcp
+from deep_pv.get_data import get_predict_image_gcp, upload_to_gcp
 from google.cloud import storage
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import io
 
 # model = get_model_locally()
 graph = tf.get_default_graph()
@@ -61,12 +62,14 @@ def predict(latitude, longitude):
         'key':'AIzaSyBYmLO0dOqMcbUPTv_A0vKF_DThu0PgK7o'
     })
     picture_stored = cv.cvtColor(cv.imdecode(np.asarray(bytearray(picture.content), dtype="uint8"),cv.IMREAD_COLOR), cv.COLOR_BGR2RGB)
+    im = Image.fromarray(picture_stored)
+    upload_to_gcp(im, f'{latitude}_{longitude}')
     with graph.as_default():
         r = mrcnn_predict(model_2, picture_stored)
     for key in r:
         r[key] = r[key].tolist()
     if r['rois']:
-        r['solar_present'] = 0
-    else:
         r['solar_present'] = 1
+    else:
+        r['solar_present'] = 0
     return r
