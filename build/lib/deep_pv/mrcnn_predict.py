@@ -5,7 +5,7 @@ from deep_pv.mrcnn import visualize
 import os
 
 #Local directory to reference
-from deep_pv.get_data import get_predict_image_gcp, download_weights
+from get_data import get_predict_image_gcp, download_weights
 
 # Params
 from deep_pv.params import MODEL_NAME, BUCKET_NAME, BUCKET_TRAIN_DATA_CALI
@@ -71,9 +71,7 @@ def mrcnn_instantiate():
 
 def mrcnn_predict(model, img):
     # img = get_predict_image_gcp(file_name)
-    print(type(img))
     results = model.detect([img], verbose=1)
-
     r = results[0]
     visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], r['scores'], figsize=(5,5))
     print(r)

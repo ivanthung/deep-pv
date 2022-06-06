@@ -19,6 +19,7 @@ if clicked:
     st.pydeck_chart(make_map(image_dataset))
 
 address = st.text_input('Location')
+key = st.text_input('API Key')
 
 url = 'http://127.0.0.1:8000/predict'
 
@@ -29,7 +30,7 @@ def load_api(url, params):
     else:
         return r.json()
 
-if address:
+if address and key:
     geolocator = Nominatim(user_agent="http")
     location = geolocator.geocode(address)
     longitude = location.longitude
@@ -37,7 +38,8 @@ if address:
 
     params = {
         'latitude': latitude,
-        'longitude': longitude
+        'longitude': longitude,
+        'key':key
     }
     api_outcome = load_api(url,params)
     st.write(api_outcome['response'])
