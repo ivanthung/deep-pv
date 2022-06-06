@@ -40,10 +40,8 @@ streamlit
 six>=1.14
 joblib
 memoized-property
-termcolor
 opencv-python
 uvicorn
-json
 
 
 # for coco-viewer
