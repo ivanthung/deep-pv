@@ -1,3 +1,43 @@
+<<<<<<< HEAD:deep_pv/utils/mrcnn_predict.py
+#import packages
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+import sys
+import json
+
+import h5py
+import tensorflow
+import keras
+# import clint
+# import crontab
+# import tablib
+
+#import model from GCP
+import os
+import pandas as pd
+import numpy as np
+from google.cloud import storage
+from pathlib import Path
+
+ROOT_DIR = os.path.abspath('/Users/maryward/code/ivanthung_deep_pv/deep-pv/')
+os.chdir(ROOT_DIR)
+
+MRCNN_DIR = 'deep_pv/mrcnn'
+MODEL_DIR = os.path.join(ROOT_DIR + MRCNN_DIR, "logs")
+MODEL_WEIGHTS_PATH = 'model_weights_path.h5'
+
+from get_data import get_predict_image_gcp
+import skimage
+
+# BUCKET_NAME = "wagon-data-907-ward"
+# BUCKET_TRAIN_DATA_PATH = "data/png/"
+
+#import items from the mrcnn model
+
+=======
+>>>>>>> master:deep_pv/mrcnn_predict.py
 # Import Mask RCNN
 from deep_pv.mrcnn.config import Config
 from deep_pv.mrcnn import model as modellib

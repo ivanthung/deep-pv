@@ -88,9 +88,9 @@ def dump_images(img_dir, dump_location, coco_path):
 def main():
 
     coco_filepath = DATA_DIR
-    coco_filename = ['COCO_all_stockton.json']
-    coco_filename_out = 'COCO_all_stockton_balanced.json'
-    dump_location = 'cocofiles_all_stockton_balanced/'
+    coco_filename = ['COCO_all_fresno_split.json']
+    coco_filename_out = 'COCO_all_fresno_balanced.json'
+    dump_location = 'cocofiles_all_fresno_balanced/'
     file_dim = (256, 256, 3)
 
     os.makedirs(ALL_DATA_DIR + dump_location, exist_ok=True)
@@ -112,7 +112,7 @@ def main():
 
 def test_coco_file():
 
-    coco_json = COCO(ALL_DATA_DIR + 'COCO_all_stockton_balanced.json')
+    coco_json = COCO(ALL_DATA_DIR + 'COCO_all_fresno_balanced.json')
     print("Checking validadity of notations")
 
     for imId in coco_json.getImgIds():
@@ -126,8 +126,8 @@ def test_coco_file():
 
 if __name__ == '__main__':
     ROOT_DIR = '/Users/ivanthung/code/ivanthung/deep-pv/'
-    DATA_DIR = 'raw_data/cocofiles_stockton/'
-    OUTPUT_DATA_DIR = 'raw_data/cocofiles_all_stockton_balanced/'
+    DATA_DIR = 'raw_data/cocofiles_fresno/'
+    OUTPUT_DATA_DIR = 'raw_data/cocofiles_all_fresno_balanced/'
     ALL_DATA_DIR = 'raw_data/'
 
     os.chdir(ROOT_DIR)
