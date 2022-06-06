@@ -44,6 +44,7 @@ count_lines:
 # ----------------------------------
 #      UPLOAD PACKAGE TO PYPI
 # ----------------------------------
+
 PYPI_USERNAME=<AUTHOR>
 build:
 	@python setup.py sdist bdist_wheel
@@ -95,6 +96,8 @@ REGION=europe-west1
 PYTHON_VERSION=3.7
 FRAMEWORK=tensorflow
 RUNTIME_VERSION=1.15
+BUCKET_TRAINING_FOLDER=training_folder # non-existing
+FILENAME=train.py # non-existing
 
 gcp_submit_training:
 	gcloud ai-platform jobs submit training ${JOB_NAME} \
