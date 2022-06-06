@@ -2,15 +2,15 @@
 from deep_pv.mrcnn.config import Config
 from deep_pv.mrcnn import model as modellib
 from deep_pv.mrcnn import visualize
+import os
 
 #Local directory to reference
-from get_data import get_predict_image_gcp, download_weights
+from deep_pv.get_data import get_predict_image_gcp, download_weights
 
 # Params
 from deep_pv.params import MODEL_NAME, BUCKET_NAME, BUCKET_TRAIN_DATA_CALI
 MRCNN_DIR = 'deep_pv/mrcnn'
-
-# MODEL_DIR = os.path.join(ROOT_DIR + MRCNN_DIR, "logs")
+MODEL_DIR = os.path.join( MRCNN_DIR, "logs")
 
 class SolarPanelsConfig(Config):
     """Configuration for training on a COCO dataset.
@@ -61,14 +61,15 @@ def mrcnn_instantiate():
     ''' Instantiate a model in inference mode'''
     inference_config = InferenceConfig()
     model = modellib.MaskRCNN(mode="inference",
-                          config=inference_config)
+                          config=inference_config,
+                          model_dir = MODEL_DIR)
 
     #load model_weights to model instatiation
     weights_path = download_weights()
     model.load_weights(weights_path, by_name=True)
     return model
 
-def mrcnn_predict(model, file_name):
+def mrcnn_predict(model, img):
     img = get_predict_image_gcp(file_name)
     results = model.detect([img], verbose=1)
     r = results[0]
