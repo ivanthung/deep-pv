@@ -3,7 +3,11 @@
 .ipynb_checkpoints
 .DS_Store
 raw_data/
+models/trained_weights/
+models/class_model/
+data/
 *.csv
 **/__pycache__/
 .env
-pretrained_models/
+model_weights*
+logs/

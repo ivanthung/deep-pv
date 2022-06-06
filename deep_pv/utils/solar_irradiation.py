@@ -7,7 +7,6 @@ https://joint-research-centre.ec.europa.eu/pvgis-photovoltaic-geographical-infor
 TODO: Check what the returned value actually represents.
 """
 
-
 BASE_URI = 'https://re.jrc.ec.europa.eu/'
 
 def get_data(query, database = '/MRcalc'):

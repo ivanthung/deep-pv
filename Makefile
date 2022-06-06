@@ -54,15 +54,62 @@ pypi_test:
 pypi:
 	@twine upload dist/* -u $(PYPI_USERNAME)
 
-##get data
+# ----------------------------------
+#             GCP set-up and upload
+# ----------------------------------
+PROJECT_ID=deeppv-351812
+BUCKET_NAME=wagon-data-907-deeppv
+BUCKET_FOLDER=train_data
+
+REGION=europe-west1
 PACKAGE_NAME=DEEP-PV
+
 MODULE=get_data
-PACKAGE_NAME_API=deep_pv
+PACKAGE_NAME=deep_pv
+LOCAL_PATH= /Users/ivanthung/code/ivanthung/deep-pv/models/trained_weights
+BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
+
+set_project:
+	@gcloud config set project ${PROJECT_ID}
+
+create_bucket:
+	@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
+
+upload_data:
+	@gsutil cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+
+upload_weights:
+	@gsutil cp -r ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+
+run_locally:
+	@python -m ${PACKAGE_NAME}.${FILENAME}
+
 get_predict_image_gcp:
-	@python -m ${PACKAGE_NAME_API}.${MODULE}
+	@python -m ${PACKAGE_NAME}.${MODULE}
+
+
+### GCP AI Platform - - - - - - - - - - - - - - - - - - - -
+##### Machine configuration - - - - - - - - - - - - - - - -
+
+REGION=europe-west1
+PYTHON_VERSION=3.7
+FRAMEWORK=tensorflow
+RUNTIME_VERSION=1.15
+
+gcp_submit_training:
+	gcloud ai-platform jobs submit training ${JOB_NAME} \
+		--job-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER} \
+		--package-path ${PACKAGE_NAME} \
+		--module-name ${PACKAGE_NAME}.${FILENAME} \
+		--python-version=${PYTHON_VERSION} \
+		--runtime-version=${RUNTIME_VERSION} \
+		--region ${REGION} \
+		--stream-logs
+
 # ----------------------------------
 #             USE API
 # ----------------------------------
+
 run_api:
 	uvicorn api.fast:app --reload
 
