@@ -11,3 +11,4 @@ data/
 .env
 model_weights*
 logs/
+deeppv-351812-304b34825c68.json
