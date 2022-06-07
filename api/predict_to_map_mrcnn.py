@@ -38,38 +38,49 @@ def get_images_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #change 
 def make_map(lats, lons, bbs, points):
     """Display a map centered at the mean lat/lon of the query set."""
     # Adding code so we can have map default to the center of the data
+    bbs = pd.DataFrame(bbs)
+    points = pd.DataFrame(points)
+
+    print(bbs.head())
     midpoint = (np.average(lats), np.average(lons))
+    midpoint_sample = points.loc[1, 'lat'], points.loc[1, 'lon']
 
     initial_view_state=pdk.ViewState(
-            latitude=midpoint[0],
-            longitude=midpoint[1],
-            zoom=11)
+            latitude=midpoint_sample[0],
+            longitude=midpoint_sample[1],
+            zoom=20)
 
     layer1 = pdk.Layer(
         "PolygonLayer",
-        pd.DataFrame(bbs),
-        opacity=0.8,
+        bbs,
+        opacity=1,
         get_polygon="geometry",
         filled=False,
+        getLineWidth=.5,
         extruded=False,
-        get_line_color=[255, 255, 255],
+        wireframe=True,
+        get_line_color=[255,255,0],
         auto_highlight=True,
         pickable=True,
         )
 
     layer2 = pdk.Layer(
                 'ScatterplotLayer',
-                data=pd.DataFrame(points),
+                data=points,
                 get_position='[lon, lat]',
                 get_color='[200, 30, 0, 160]',
-                get_radius=200,
+                minPixelRadius = 10,
+                maxPixelRadios = 50,
+                get_radius='area',
+                stroked=True,
+                pickable=True
                 )
 
     #Create labeled map
-    labeled_map = pdk.Deck(layers=[layer1, layer2],
+    labeled_map = pdk.Deck(layers=[layer1,layer2],
                            initial_view_state=initial_view_state,
-                           map_style='mapbox://styles/mapbox/light-v9')
-
+                           map_style='mapbox://styles/mapbox/satellite-v9')
+    labeled_map.to_html('test.html')
     return labeled_map
 
 def prediction_scores(lats, lons, image_names, log = ''):
@@ -126,7 +137,6 @@ def predict_to_map(lats, lons, scores):
     points = scores_to_points(scores)
     map = make_map(lats, lons, bbs, points)
 
-    print(pd.DataFrame(bbs).head())
     return map
 
 def get_scores(bucket_name, log = ''):

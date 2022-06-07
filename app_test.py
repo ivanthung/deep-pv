@@ -4,6 +4,7 @@ from geopy.geocoders import Nominatim
 from PIL import Image
 from api.predict_to_map_mrcnn import get_scores, predict_to_map
 from deep_pv.params import BUCKET_NAME
+import pydeck as pdk
 
 # @st.cache
 # predict all images to a bucket and return the stuff.
@@ -20,16 +21,15 @@ address = col1.text_input('Location')
 key = col1.text_input('API Key')
 url = 'http://127.0.0.1:8000/predict'
 
-
-if kpi:
-    col1.metric(label="Temperature", value="70 °F", delta="1.2 °F")
-
 bucket_name = BUCKET_NAME
 lats, lons, scores = get_scores(bucket_name, log=col2)
 map = predict_to_map(lats, lons, scores)
 
 if clicked:
     col1.pydeck_chart(map)
+
+if kpi:
+    col1.metric(label="Temperature", value="70 °F", delta="1.2 °F")
 
 # def load_api(url, params):
 #     r = requests.get(url, params)
