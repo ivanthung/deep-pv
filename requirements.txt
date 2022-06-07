@@ -34,6 +34,7 @@ requests
 opencv-python
 pydeck
 streamlit
+python-dotenv
 
 # utilities
 six>=1.14

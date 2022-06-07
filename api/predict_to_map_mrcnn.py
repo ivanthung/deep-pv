@@ -5,6 +5,7 @@ from deep_pv.utils.results_processing import get_bb_latlon, get_real_mask_area
 from deep_pv.params import BUCKET_NAME
 from deep_pv.utils.test_output import test_results
 import streamlit as st
+import pandas as pd
 import geopandas as gpd
 
 # # Uncomment when running on intel
@@ -43,25 +44,35 @@ def make_map(lats, lons, bbs, points):
             latitude=midpoint[0],
             longitude=midpoint[1],
             zoom=11)
-    layer1= pdk.Layer(
-                'ShapeLayer',
-                data=bbs,
-                get_position='[lon, lat]',
-                elevation_scale=4,
-                elevation_range=[0, 1000],
-                pickable=True,
-                extruded=True )
+
+    layer1 = pdk.Layer(
+        "PolygonLayer",
+        pd.DataFrame(bbs),
+        opacity=0.8,
+        get_polygon="geometry",
+        filled=False,
+        extruded=False,
+        get_line_color=[255, 255, 255],
+        auto_highlight=True,
+        pickable=True,
+        )
+
     layer2 = pdk.Layer(
                 'ScatterplotLayer',
-                data=points,
+                data=pd.DataFrame(points),
                 get_position='[lon, lat]',
                 get_color='[200, 30, 0, 160]',
-                get_radius=40)
-    #Render
-    labeled_map = pdk.Deck(layers=[layer2], initial_view_state=initial_view_state)
-    return st.pydeck_chart(labeled_map)
+                get_radius=200,
+                )
 
-def prediction_scores(lats, lons, image_names):
+    #Create labeled map
+    labeled_map = pdk.Deck(layers=[layer1, layer2],
+                           initial_view_state=initial_view_state,
+                           map_style='mapbox://styles/mapbox/light-v9')
+
+    return labeled_map
+
+def prediction_scores(lats, lons, image_names, log = ''):
     """
     Input images to do the prediction on.
     Returns a dictionary of scores with points that have gone through preprocessing,
@@ -82,13 +93,16 @@ def prediction_scores(lats, lons, image_names):
             area_tile = 256
             area = (np.sum(mask) / mask.shape[0] ** 2) * area_tile
           ##angel_correction_45 = get_angle(0.45)
-            angel_correction_45 =1.8008942047053533
-            area_corrected = area*angel_correction_45
+            angle_correction_45 =1.8008942047053533
+            area_corrected = area*angle_correction_45
             efficiency = 0.15
           ##radiation = get_monthly_average_irr(query) query = {'lat': 51.916667,'lon': 4.5}
             radiation = 88.93895833333335
             kWh_mon = area_corrected*radiation*efficiency
             print(f"Processing result {j} from image: {image_names[i]}")
+
+            if log:
+                log.write(f"Loading areas of interest {j} from image: {image_names[i]}")
             scores.append({\
                 'name' : image_names[i],
                 'mask': mask,
@@ -119,19 +133,25 @@ def scores_to_bb(scores):
 def scores_to_shape(scores):
     pass
 
-def predict_to_map(bucket_name):
-    lats, lons, images = get_images_gcp(bucket_name)
-    scores = prediction_scores(lats, lons, images)
+def predict_to_map(lats, lons, scores):
+    bbs = scores_to_bb(scores)
+    points = scores_to_points(scores)
+    map = make_map(lats, lons, bbs, points)
 
-    df = gpd.GeoDataFrame(scores)
-    print(df.head())
-    # bbs = scores_to_bb(scores)
-    # points = scores_to_points(scores)
-    # map = make_map(lats, lons, bbs, points)
+    print(pd.DataFrame(bbs).head())
     return map
+
+def get_scores(bucket_name, log = ''):
+    if log:
+        log.write("... getting files from GCP")
+
+    lats, lons, images = get_images_gcp(bucket_name)
+    scores = prediction_scores(lats, lons, images, log=log)
+    return lats, lons, scores
 
 if __name__=="__main__":
     # TODO: check layertypes PyDeck
     bucket_name = BUCKET_NAME
-    predict_to_map(bucket_name)
+    lats, lons, scores = get_scores(bucket_name)
+    map = predict_to_map(lats, lons, scores)
     pass

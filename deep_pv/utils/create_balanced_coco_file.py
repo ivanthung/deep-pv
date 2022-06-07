@@ -86,7 +86,6 @@ def dump_images(img_dir, dump_location, coco_path):
     print(f'Dumped {image_name} at {dump_location}')
 
 def main():
-
     coco_filepath = DATA_DIR
     coco_filename = ['COCO_all_fresno_split.json']
     coco_filename_out = 'COCO_all_fresno_balanced.json'
