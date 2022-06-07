@@ -1,10 +1,14 @@
 import pickle
 import matplotlib.pyplot as plt
 
-file_name = 'test_results/sample1.pkl'
+def test_results():
+    file_name = 'test_results/sample1.pkl'
+    with open(file_name, 'rb') as handle:
+        results = pickle.load(handle)
 
-with open(file_name, 'rb') as handle:
-    results = pickle.load(handle)
+    return results
 
-mask = results[0][0]['masks'][:,:,0]
-plt.imshow(mask)
+if __name__ == '__main__':
+    results = test_results()
+    for result in results:
+        print(result)
