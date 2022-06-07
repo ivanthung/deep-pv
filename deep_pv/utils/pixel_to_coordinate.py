@@ -29,7 +29,6 @@ def find_opposite_corners(tile, zoom = 21):
           'bottom_right':num2deg(tile[0]+1, tile[1]+1, zoom)}
 
 ## function below requires image to have centre as centre of standard 512x512 zoom 21.
-
 def center_to_pixel(lat, long, x, y, size = 512, zoom = 21):
     """ Input:
     lat: center coordinate
@@ -54,7 +53,6 @@ def get_coords(lat_deg, lon_deg, zoom = 21, size = 30):
                             for j in range(size)
                             for i in range(size)])
                             .reshape(size,size,2))
-
 
 def haversine_vectorized(start_lat,
                          start_lon,

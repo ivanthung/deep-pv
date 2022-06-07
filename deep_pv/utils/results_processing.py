@@ -79,10 +79,10 @@ def get_bb_latlon(lat: float, lon:float, mask: np.array) -> list:
 
     return {\
         'bounding box':
-            Polygon([[lon0, lat0],
+                    [[lon0, lat0],
                     [lon1,lat0],
                     [lon1,lat1],
-                    [lon0, lat1]]),
+                    [lon0, lat1]],
         'midpoint': midpoint_real_coord
     }
 

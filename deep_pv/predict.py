@@ -13,7 +13,6 @@ BUCKET_NAME = "wagon-data-907-deeppv"  # ⚠️ replace with project BUCKET NAME
 ## download model from GCP
 # def download_model(bucket=BUCKET_NAME):
 #     client = storage.Client().bucket(bucket)
-
 #     storage_location = 'models/class_model/saved_model.pb'
 #     print(storage_location)
 #     blob = client.blob(storage_location)
