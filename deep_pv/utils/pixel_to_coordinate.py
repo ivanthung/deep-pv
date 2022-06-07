@@ -36,6 +36,7 @@ def center_to_pixel(lat, long, x, y, size = 512, zoom = 21):
     long: center coordinate
     x: pixel coordinate x
     y: pixel coordinate y
+    returns lat_y, lon_x
     """
 
     box = deg2num(lat, long, zoom)

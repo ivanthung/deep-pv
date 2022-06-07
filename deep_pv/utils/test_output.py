@@ -7,3 +7,8 @@ def test_results():
         results = pickle.load(handle)
 
     return results
+
+if __name__ == '__main__':
+    results = test_results()
+    for result in results:
+        print(result)

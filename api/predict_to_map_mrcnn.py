@@ -1,9 +1,11 @@
-import pandas as pd
 import numpy as np
 from google.cloud import storage
 import pydeck as pdk
+from deep_pv.utils.results_processing import get_bb_latlon, get_real_mask_area
 from deep_pv.params import BUCKET_NAME
 from deep_pv.utils.test_output import test_results
+import streamlit as st
+import geopandas as gpd
 
 # # Uncomment when running on intel
 # from tensorflow import keras, nn, expand_dims
@@ -24,69 +26,100 @@ def get_images_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #change 
     for blob in blobs:
         name = blob.name[-22:]
         name = 'data/'+ name
-        lat = blob.name[-22:-13]
-        lon = blob.name[-12:-4]
-        lats.append(lat)
-        lons.append(lon)
+        lat = blob.name[-22:-13].replace('_', '')
+        lon = blob.name[-12:-4].replace('_', '')
+        lats.append(float(lat))
+        lons.append(float(lon))
         image_names.append(name)
         blob.download_to_filename(name) #filename = 'data/lat_lon.jpg'
-    return lons, lats, image_names
+    return lats, lons, image_names
 
-def make_map(image_dataset):
+def make_map(lats, lons, bbs, points):
     """Display a map centered at the mean lat/lon of the query set."""
     # Adding code so we can have map default to the center of the data
-    image_dataset['lat'] = image_dataset['lat'].astype('float')
-    image_dataset['lon'] = image_dataset['lon'].astype('float')
-    midpoint = (np.average(image_dataset['lat']), np.average(image_dataset['lon']))
+    midpoint = (np.average(lats), np.average(lons))
 
     initial_view_state=pdk.ViewState(
             latitude=midpoint[0],
             longitude=midpoint[1],
             zoom=11)
     layer1= pdk.Layer(
-                'HexagonLayer',
-                data=image_dataset,
+                'ShapeLayer',
+                data=bbs,
                 get_position='[lon, lat]',
-                radius=200,
                 elevation_scale=4,
                 elevation_range=[0, 1000],
                 pickable=True,
                 extruded=True )
-
     layer2 = pdk.Layer(
                 'ScatterplotLayer',
-                data= image_dataset,
+                data=points,
                 get_position='[lon, lat]',
                 get_color='[200, 30, 0, 160]',
                 get_radius=40)
-
     #Render
     labeled_map = pdk.Deck(layers=[layer2], initial_view_state=initial_view_state)
     return st.pydeck_chart(labeled_map)
 
-def prediction_map_mrcnn(lons, lats, image_names):
+def prediction_scores(lats, lons, image_names):
     """
     Input images to do the prediction on.
-    Returns a dictionary of scores and shapes that have gone through preprocessing,
+    Returns a dictionary of scores with points that have gone through preprocessing,
     that can be spatialized with XY values in the next step.
     """
-
     # # TODO: once docker file running; implement below logic and replace test results.
     # model = mrcnn_instantiate()
     # results = mrcnn_predict(model, image_names)
-    print("Loading images from: ", image_names)
+
     results = test_results()
+    scores = []
+    for i, result in enumerate(results):
+        n_annotations = len(result[0]['class_ids'])
+        for j in range(n_annotations):
+            mask = result[0]['masks'][:,:,j]
+            bb_latlon = get_bb_latlon(lats[i], lons[i], mask)
+            print(f"Processing result {j} from image: {image_names[i]}")
+            scores.append({\
+                'name' : image_names[i],
+                'mask': mask,
+                'score': result[0]['scores'][j],
+                'bb_latlon': bb_latlon['bounding box'],
+                'lat': bb_latlon['midpoint'][0],
+                'lon': bb_latlon['midpoint'][1],
+                'area': get_real_mask_area(lats[i], lons[i], mask)})
+    return scores
 
+def scores_to_points(scores):
+    return [{
+        'name': s['name'],
+        'lat': s['lat'],
+        'lon': s['lon'],
+        'area': s['area']
+        } for s in scores ]
 
+def scores_to_bb(scores):
+    return [{
+        'name': s['name'],
+        'geometry': s['bb_latlon'],
+        'confidence': s['score']
+        } for s in scores ]
+
+def scores_to_shape(scores):
     pass
 
-def test_ivan():
-    prediction_map_mrcnn(get_images_gcp(BUCKET_NAME))
+def predict_to_map(bucket_name):
+    lats, lons, images = get_images_gcp(bucket_name)
+    scores = prediction_scores(lats, lons, images)
 
-
-    # image_dataset = make_dataset(image_class, heat_score_list,lat, lon, image_name)
-    return
+    df = gpd.GeoDataFrame(scores)
+    print(df.head())
+    # bbs = scores_to_bb(scores)
+    # points = scores_to_points(scores)
+    # map = make_map(lats, lons, bbs, points)
+    return map
 
 if __name__=="__main__":
-    test_ivan()
+    # TODO: check layertypes PyDeck
+    bucket_name = BUCKET_NAME
+    predict_to_map(bucket_name)
     pass

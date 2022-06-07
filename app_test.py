@@ -2,23 +2,22 @@ import streamlit as st
 import requests
 from geopy.geocoders import Nominatim
 from PIL import Image
-from api.predict_to_map import get_images_gcp, get_model_locally, make_dataset, make_map, prediction_map
+from api.predict_to_map_mrcnn import predict_to_map
 from deep_pv.params import BUCKET_NAME
 
 # @st.cache
-lat, lon, image_name = get_images_gcp(BUCKET_NAME)
-model = get_model_locally()
-image_class, heat_score_list = prediction_map(model, image_name)
-image_dataset = make_dataset(image_class, heat_score_list,lat, lon, image_name)
+# predict all images to a bucket and return the stuff.
+
+bucket_name = BUCKET_NAME
+map = predict_to_map(bucket_name)
 
 clicked = st.button('Click for heat map')
 
 if clicked:
-    st.pydeck_chart(make_map(image_dataset))
+    st.pydeck_chart(map)
 
 address = st.text_input('Location')
 key = st.text_input('API Key')
-
 url = 'http://127.0.0.1:8000/predict'
 
 def load_api(url, params):
