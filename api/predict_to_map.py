@@ -105,6 +105,7 @@ def test_mary():
     image_dataset = make_dataset(image_class, heat_score_list,lat, lon, image_name)
     return
 
+
 def test_ivan():
     lat,lon, image_name = get_images_gcp(BUCKET_NAME)
     model = get_model_locally()
