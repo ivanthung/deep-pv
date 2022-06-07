@@ -89,10 +89,20 @@ def prediction_scores(lats, lons, image_names, log = ''):
         for j in range(n_annotations):
             mask = result[0]['masks'][:,:,j]
             bb_latlon = get_bb_latlon(lats[i], lons[i], mask)
+          ##area_tile = get_tile_area(lat, lon, mask)
+            area_tile = 256
+            area = (np.sum(mask) / mask.shape[0] ** 2) * area_tile
+          ##angel_correction_45 = get_angle(0.45)
+            angle_correction_45 =1.8008942047053533
+            area_corrected = area*angle_correction_45
+            efficiency = 0.15
+          ##radiation = get_monthly_average_irr(query) query = {'lat': 51.916667,'lon': 4.5}
+            radiation = 88.93895833333335
+            kWh_mon = area_corrected*radiation*efficiency
+            print(f"Processing result {j} from image: {image_names[i]}")
 
             if log:
                 log.write(f"Loading areas of interest {j} from image: {image_names[i]}")
-
             scores.append({\
                 'name' : image_names[i],
                 'mask': mask,
@@ -100,7 +110,9 @@ def prediction_scores(lats, lons, image_names, log = ''):
                 'bb_latlon': bb_latlon['bounding box'],
                 'lat': bb_latlon['midpoint'][0],
                 'lon': bb_latlon['midpoint'][1],
-                'area': get_real_mask_area(lats[i], lons[i], mask)})
+                'area': area,
+                'area_correction':area_corrected,
+                'kWh_mon':kWh_mon})
     return scores
 
 def scores_to_points(scores):
