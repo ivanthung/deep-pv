@@ -5,6 +5,8 @@ COPY models /models
 COPY deep_pv /deep_pv
 COPY requirements.txt /requirements.txt
 COPY setup.py /setup.py
+COPY deeppv-351812-304b34825c68.json /deeppv-351812-304b34825c68.json
+COPY .env /.env
 
 RUN pip install --upgrade pip
 RUN pip3 install Cython
