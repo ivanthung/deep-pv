@@ -69,6 +69,7 @@ def prediction_scores(lats, lons, image_names, results='', log = ''):
     # results = mrcnn_predict(model, image_names)
     if results == '':
         results = test_results()
+        print("getting test results rather than real results")
 
     scores = []
     for i, result in enumerate(results):

@@ -63,7 +63,6 @@ def download_images_from_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/')
 
     return [download_blob(blob) for blob in blobs]
 
-
 def download_weights():
     """ Proof of concept to download the weights from GCP.
     TODO:

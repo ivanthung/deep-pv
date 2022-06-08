@@ -75,15 +75,15 @@ def get_bb_latlon(lat: float, lon:float, mask: np.array) -> list:
     midpoint = get_midpoint_from_bb(bb)
     midpoint_real_coord = center_to_pixel(lat, lon, midpoint[0], midpoint[1])
 
-    lat0, lon0 = center_to_pixel(lat, lon, *bb[0])
-    lat1, lon1 = center_to_pixel(lat, lon, *bb[1])
+    latmin, lonmin = center_to_pixel(lat, lon, *bb[0])
+    latmax, lonmax = center_to_pixel(lat, lon, *bb[1])
 
     return {\
         'bounding box':
-                    [[lon0, lat0],
-                    [lon1,lat0],
-                    [lon1,lat1],
-                    [lon0, lat1]],
+                    [[lonmin, latmin],
+                    [lonmax,latmin],
+                    [lonmax,latmax],
+                    [lonmin, latmax]],
         'midpoint': midpoint_real_coord
     }
 
