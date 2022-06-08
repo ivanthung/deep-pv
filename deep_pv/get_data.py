@@ -99,5 +99,14 @@ def upload_to_gcp(image, filename, image_type = 'jpg'):
     image.save(img_byte_array, format='JPEG')
     blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
 
+def upload_to_gcp_hood(image, folder, filename, image_type = 'jpg'):
+    client = storage.Client.from_service_account_json(os.getenv("gcp_json_path"))
+    blob_path = f'data/hood/{folder}/{filename}.{image_type}'
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(blob_path)
+    img_byte_array = BytesIO()
+    image.save(img_byte_array, format='JPEG')
+    blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
+
 if __name__ =="__main__":
     images = download_images_from_gcp(BUCKET_NAME)

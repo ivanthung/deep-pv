@@ -1,12 +1,12 @@
 # Import Mask RCNN
-from deep_pv.get_data import download_images_from_gcp
+from deep_pv.get_data import download_images_from_gcp, download_weights
 from deep_pv.mrcnn.config import Config
 from deep_pv.mrcnn import model as modellib
 from deep_pv.mrcnn import visualize
 import os
 
 #Local directory to reference
-from get_data import get_images_gcp, download_weights
+# from get_data import get_images_gcp, download_weights
 
 # Params
 from deep_pv.params import MODEL_NAME, BUCKET_NAME, BUCKET_TRAIN_DATA_CALI
@@ -70,12 +70,10 @@ def mrcnn_instantiate():
 
 def mrcnn_predict(model, prefix):
     images = download_images_from_gcp(BUCKET_NAME, prefix=prefix)
-
-    results = model.detect(images, verbose=1)
-    r = results[0]
-    visualize.display_instances(images, r['rois'], r['masks'], r['class_ids'], r['scores'], figsize=(5,5))
-    print(r)
-    return r
+    results = []
+    for image in images:
+        results.append(model.detect([image], verbose=1))
+    return results
 
 if __name__ == '__main__':
     file_name ='51.906771_4.451552'
