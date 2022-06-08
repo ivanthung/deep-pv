@@ -65,7 +65,7 @@ def hood(latitude, longitude, key, zoom = 21, size = 7):
     size = int(size)
     zoom = int(zoom)
     url = "https://maps.googleapis.com/maps/api/staticmap?"
-    for lat, long in get_coords_list(latitude, longitude, zoom, size):
+    for lat, long in get_coords_list(latitude, longitude, zoom - 1, size):
         lat, long = round(float(lat),6), round(float(long),6)
         picture = requests.get(url,params = {
             'center':f'{lat},{long}',
