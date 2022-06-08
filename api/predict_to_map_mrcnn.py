@@ -4,6 +4,7 @@ import pydeck as pdk
 from deep_pv.utils.results_processing import get_bb_latlon, get_real_mask_area
 from deep_pv.params import BUCKET_NAME
 from deep_pv.utils.test_output import test_results
+from deep_pv.get_data import get_image_names_gcp
 import streamlit as st
 import pandas as pd
 import geopandas as gpd
@@ -11,29 +12,6 @@ import geopandas as gpd
 # # Uncomment when running on intel
 # from tensorflow import keras, nn, expand_dims
 # from deep_pv.predict import get_model_locally
-
-def get_images_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #change to include variable for filename
-    """" Inputs bucket name and prefix path from root of bucket:
-    example: data/Rotterdam/PV_Present
-    returns: lat, lon, and image names in a list fomr the"""
-
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(BUCKET_NAME)
-    print("Bucket name: ", bucket)
-    blobs = bucket.list_blobs(prefix=prefix)  # Get list of files
-    lats = []
-    lons = []
-    image_names = []
-    for blob in blobs:
-        name = blob.name[-22:]
-        name = 'data/'+ name
-        lat = blob.name[-22:-13].replace('_', '')
-        lon = blob.name[-12:-4].replace('_', '')
-        lats.append(float(lat))
-        lons.append(float(lon))
-        image_names.append(name)
-        blob.download_to_filename(name) #filename = 'data/lat_lon.jpg'
-    return lats, lons, image_names
 
 def make_map(lats, lons, bbs, points):
     """Display a map centered at the mean lat/lon of the query set."""
@@ -155,7 +133,7 @@ def get_scores(bucket_name, log = ''):
     if log:
         log.write("... getting files from GCP")
 
-    lats, lons, images = get_images_gcp(bucket_name)
+    lats, lons, images = get_image_names_gcp(bucket_name)
     scores = prediction_scores(lats, lons, images, log=log)
     return lats, lons, scores
 

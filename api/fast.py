@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tensorflow import keras, nn, expand_dims, Graph
 from deep_pv.params import BUCKET_NAME, MODEL_NAME
-from deep_pv.predict import prediction, download_model2, get_model_locally
 from deep_pv.mrcnn_predict import mrcnn_instantiate, mrcnn_predict
 import numpy as np
 from PIL import Image
@@ -14,10 +13,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import io
 
-# model = get_model_locally()
 graph = tf.get_default_graph()
-model_2 = mrcnn_instantiate()
-
+model = mrcnn_instantiate()
 
 app = FastAPI()
 
@@ -65,8 +62,10 @@ def predict(latitude, longitude):
     im = Image.fromarray(picture_stored)
     upload_to_gcp(im, f'{latitude}_{longitude}')
 
+    temp_bucket_name = BUCKET_NAME
     with graph.as_default():
-        r = mrcnn_predict(model_2, picture_stored)
+        r = mrcnn_predict(model, picture_stored)
+
     for key in r:
         r[key] = r[key].tolist()
     if r['rois']:
