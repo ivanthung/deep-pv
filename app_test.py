@@ -6,6 +6,8 @@ from api.predict_to_map_mrcnn import get_scores, predict_to_map
 from deep_pv.params import BUCKET_NAME
 import pydeck as pdk
 
+URL = 'http://127.0.0.1:8000/predict'
+
 # @st.cache
 # predict all images to a bucket and return the stuff.
 st.set_page_config(layout="wide")
@@ -19,7 +21,6 @@ kpi = col1.button('Generate KPIs')
 
 address = col1.text_input('Location')
 key = col1.text_input('API Key')
-url = 'http://127.0.0.1:8000/predict'
 
 bucket_name = BUCKET_NAME
 lats, lons, scores = get_scores(bucket_name, log=col2)
@@ -31,14 +32,12 @@ if clicked:
 if kpi:
     col1.metric(label="Temperature", value="70 °F", delta="1.2 °F")
 
-# def load_api(url, params):
-#     r = requests.get(url, params)
-#     if r.status_code != 200:
-#         return None
-#     else:
-#         return r.json()
-
-# display_basemap()
+def load_api(url, params):
+    r = requests.get(url, params)
+    if r.status_code != 200:
+        return None
+    else:
+        return r.json()
 
 # if address and key:
 #     geolocator = Nominatim(user_agent="http")
