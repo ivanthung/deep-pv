@@ -48,15 +48,14 @@ def predict(latitude, longitude):
 
     temp_bucket_name = 'data/Rotterdam/PV Present/'
     with graph.as_default():
-        r = mrcnn_predict(model, temp_bucket_name)
+        results = mrcnn_predict(model, temp_bucket_name)
 
-    for key in r:
-        r[key] = r[key].tolist()
-    if r['rois']:
-        r['solar_present'] = 1
-    else:
-        r['solar_present'] = 0
-    return r
+    solar_present = 1
+    if len(results) == 0:
+        solar_present = 0
+
+    return {'results': results,
+            'solar_present': solar_present}
 
 @app.get("/hood")
 def hood(latitude, longitude, zoom, size, key):
