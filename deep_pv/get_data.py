@@ -36,14 +36,14 @@ def get_image_names_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #ch
     lats = []
     lons = []
     image_names = []
+
     for blob in blobs:
-        name = blob.name[-22:]
-        name = 'data/'+ name
-        lat = blob.name[-22:-13].replace('_', '')
-        lon = blob.name[-12:-4].replace('_', '')
-        lats.append(float(lat))
-        lons.append(float(lon))
+        name = blob.name.replace(prefix, '')
         image_names.append(name)
+        name = name[:-4]
+        lat_lons = name.split('_')
+        lats.append(float(lat_lons[0]))
+        lons.append(float(lat_lons[1]))
     return lats, lons, image_names
 
 def download_images_from_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #change to include variable for filename
@@ -99,16 +99,5 @@ def upload_to_gcp(image, filename, image_type = 'jpg'):
     image.save(img_byte_array, format='JPEG')
     blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
 
-def upload_to_gcp_hood(image, folder, filename, image_type = 'jpg'):
-    client = storage.Client.from_service_account_json(os.getenv("gcp_json_path"))
-    blob_path = f'data/hood/{folder}/{filename}.{image_type}'
-    bucket = client.bucket(BUCKET_NAME)
-    blob = bucket.blob(blob_path)
-    img_byte_array = BytesIO()
-    image.save(img_byte_array, format='JPEG')
-    blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
-
 if __name__ =="__main__":
     images = download_images_from_gcp(BUCKET_NAME)
-    plt.imshow(images[5])
-    plt.show()
