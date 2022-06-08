@@ -61,6 +61,18 @@ def get_coords_list(lat_deg, lon_deg, zoom = 21, size = 7):
             for j in range(size)
             for i in range(size)])
 
+def get_coords_fixed(lat_deg, lon_deg, zoom = 21, size = 7):
+  (x,y) = deg2num(lat_deg, lon_deg, zoom)
+  size1 = np.int64(2 * size)
+  a = (np.array([num2deg(x + i - size1//2,
+                            y + j - 1//2, zoom)
+                            for j in range(size1)
+                            for i in range(size1)])
+                            .reshape(size1,size1,2))
+  a = np.delete(a, range(1, a.shape[0], 2), axis=0)
+  a = np.delete(a, range(1, a.shape[1], 2), axis=1)
+  return a.reshape(size ** 2, 2).tolist()
+
 def haversine_vectorized(start_lat,
                          start_lon,
                          end_lat,

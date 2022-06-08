@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from tensorflow import keras, nn, expand_dims, Graph
 from deep_pv.params import BUCKET_NAME, MODEL_NAME
 from deep_pv.mrcnn_predict import mrcnn_instantiate, mrcnn_predict
-from deep_pv.utils.pixel_to_coordinate import get_coords_list
+from deep_pv.utils.pixel_to_coordinate import get_coords_list, get_coords_fixed
 import numpy as np
 from PIL import Image
 import cv2 as cv
@@ -65,7 +65,7 @@ def hood(latitude, longitude, key, zoom = 21, size = 7):
     size = int(size)
     zoom = int(zoom)
     url = "https://maps.googleapis.com/maps/api/staticmap?"
-    for lat, long in get_coords_list(latitude, longitude, zoom - 1, size):
+    for lat, long in get_coords_fixed(latitude, longitude, zoom, size):
         lat, long = round(float(lat),6), round(float(long),6)
         picture = requests.get(url,params = {
             'center':f'{lat},{long}',
