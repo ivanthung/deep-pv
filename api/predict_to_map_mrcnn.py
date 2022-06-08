@@ -121,7 +121,6 @@ def predict_to_map(scores):
     bbs = scores_to_bb(scores)
     points = scores_to_points(scores)
     map = make_map(bbs, points)
-
     return map
 
 def get_scores(bucket_name,
