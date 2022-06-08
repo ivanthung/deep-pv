@@ -74,6 +74,7 @@ def get_bb_latlon(lat: float, lon:float, mask: np.array) -> list:
     bb = get_bb(coco_coords)
     midpoint = get_midpoint_from_bb(bb)
     midpoint_real_coord = center_to_pixel(lat, lon, midpoint[0], midpoint[1])
+
     lat0, lon0 = center_to_pixel(lat, lon, *bb[0])
     lat1, lon1 = center_to_pixel(lat, lon, *bb[1])
 

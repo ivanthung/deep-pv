@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from tensorflow import keras, nn, expand_dims, Graph
 from deep_pv.params import BUCKET_NAME, MODEL_NAME
-from deep_pv.predict import prediction, download_model2, get_model_locally
 from deep_pv.mrcnn_predict import mrcnn_instantiate, mrcnn_predict
 from deep_pv.utils.pixel_to_coordinate import get_coords_list
 import numpy as np
@@ -15,10 +14,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import io
 
-
 graph = tf.get_default_graph()
 model = mrcnn_instantiate()
-
 
 app = FastAPI()
 
@@ -48,8 +45,11 @@ def predict(latitude, longitude):
     picture_stored = cv.cvtColor(cv.imdecode(np.asarray(bytearray(picture.content), dtype="uint8"),cv.IMREAD_COLOR), cv.COLOR_BGR2RGB)
     im = Image.fromarray(picture_stored)
     upload_to_gcp(im, f'{latitude}_{longitude}')
+
+    temp_bucket_name = 'data/Rotterdam/PV Present/'
     with graph.as_default():
-        r = mrcnn_predict(model, picture_stored)
+        r = mrcnn_predict(model, temp_bucket_name)
+
     for key in r:
         r[key] = r[key].tolist()
     if r['rois']:

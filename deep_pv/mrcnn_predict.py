@@ -1,29 +1,28 @@
 # Import Mask RCNN
+from deep_pv.get_data import download_images_from_gcp
 from deep_pv.mrcnn.config import Config
 from deep_pv.mrcnn import model as modellib
 from deep_pv.mrcnn import visualize
 import os
 
 #Local directory to reference
-from deep_pv.get_data import get_predict_image_gcp, download_weights
+from get_data import get_images_gcp, download_weights
 
 # Params
 from deep_pv.params import MODEL_NAME, BUCKET_NAME, BUCKET_TRAIN_DATA_CALI
 MRCNN_DIR = 'deep_pv/mrcnn'
-MODEL_DIR = os.path.join( MRCNN_DIR, "logs")
+MODEL_DIR = os.path.join('deep_pv' + MRCNN_DIR, "logs")
 
 class SolarPanelsConfig(Config):
     """Configuration for training on a COCO dataset.
     Derives from the base Config class and overrides values specific
     to the COCO dataset.
     """
-
     # Give the configuration a recognizable name
     NAME = "solar_panels"
 
     # Train on 1 GPU and 1 image per GPU. Batch size is 1 (GPUs * images/GPU).
     GPU_COUNT = 1
-
     IMAGES_PER_GPU = 1
 
     # Number of classes (including background)
@@ -62,20 +61,19 @@ def mrcnn_instantiate():
     inference_config = InferenceConfig()
     model = modellib.MaskRCNN(mode="inference",
                           config=inference_config,
-                          model_dir = MODEL_DIR)
+                          model_dir=MODEL_DIR)
 
     #load model_weights to model instatiation
     weights_path = download_weights()
     model.load_weights(weights_path, by_name=True)
     return model
 
-def mrcnn_predict(model, img):
-    # img = get_predict_image_gcp(file_name)
-    print(type(img))
-    results = model.detect([img], verbose=1)
+def mrcnn_predict(model, prefix):
+    images = download_images_from_gcp(BUCKET_NAME, prefix=prefix)
 
+    results = model.detect(images, verbose=1)
     r = results[0]
-    visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'], r['scores'], figsize=(5,5))
+    visualize.display_instances(images, r['rois'], r['masks'], r['class_ids'], r['scores'], figsize=(5,5))
     print(r)
     return r
 

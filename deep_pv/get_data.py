@@ -6,11 +6,12 @@ import numpy as np
 import os
 from os.path import join, dirname, abspath
 from dotenv import load_dotenv
-# import sys
-# sys.path.append(join(dirname(abspath(__file__)), ".."))
+import matplotlib.pyplot as plt
+
 
 env_path = join(dirname(abspath(__file__)),'../.env') # ../.env
 load_dotenv(env_path)
+
 
 def get_predict_image_gcp(file_name, image_type = 'jpg'):
     """Method to get one training file from google cloud bucket"""
@@ -22,6 +23,46 @@ def get_predict_image_gcp(file_name, image_type = 'jpg'):
     data = blob.download_as_string()
     im = Image.open(BytesIO(data))
     return np.asarray(im)
+
+def get_image_names_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #change to include variable for filename
+    """" Inputs bucket name and prefix path from root of bucket:
+    example: data/Rotterdam/PV_Present
+    returns: lat, lon, and image names in a list from the bucket"""
+
+    storage_client = storage.Client.from_service_account_json(os.getenv("gcp_json_path"))
+    bucket = storage_client.get_bucket(BUCKET_NAME)
+    print("Bucket name: ", bucket)
+    blobs = bucket.list_blobs(prefix=prefix)  # Get list of files
+    lats = []
+    lons = []
+    image_names = []
+    for blob in blobs:
+        name = blob.name[-22:]
+        name = 'data/'+ name
+        lat = blob.name[-22:-13].replace('_', '')
+        lon = blob.name[-12:-4].replace('_', '')
+        lats.append(float(lat))
+        lons.append(float(lon))
+        image_names.append(name)
+    return lats, lons, image_names
+
+def download_images_from_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #change to include variable for filename
+    """" Inputs bucket name and prefix path from root of bucket:
+    example: data/Rotterdam/PV_Present
+    returns: all images in a nparray"""
+
+    storage_client = storage.Client.from_service_account_json(os.getenv("gcp_json_path"))
+    bucket = storage_client.get_bucket(BUCKET_NAME)
+    print("Bucket name: ", bucket)
+    blobs = bucket.list_blobs(prefix=prefix)  # Get list of files
+
+    def download_blob(blob):
+        data = blob.download_as_string()
+        im = Image.open(BytesIO(data))
+        return np.asarray(im)
+
+    return [download_blob(blob) for blob in blobs]
+
 
 def download_weights():
     """ Proof of concept to download the weights from GCP.
@@ -68,9 +109,6 @@ def upload_to_gcp_hood(image, folder, filename, image_type = 'jpg'):
     blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
 
 if __name__ =="__main__":
-
-    print(download_weights())
-    # # Load and print image
-    # loaded_im = get_predict_image_gcp('51.906771_4.451552')
-    # plt.imshow(loaded_im)
-    # plt.show()
+    images = download_images_from_gcp(BUCKET_NAME)
+    plt.imshow(images[5])
+    plt.show()
