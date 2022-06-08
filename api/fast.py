@@ -64,6 +64,7 @@ def predict(latitude, longitude):
     picture_stored = cv.cvtColor(cv.imdecode(np.asarray(bytearray(picture.content), dtype="uint8"),cv.IMREAD_COLOR), cv.COLOR_BGR2RGB)
     im = Image.fromarray(picture_stored)
     upload_to_gcp(im, f'{latitude}_{longitude}')
+
     with graph.as_default():
         r = mrcnn_predict(model_2, picture_stored)
     for key in r:
