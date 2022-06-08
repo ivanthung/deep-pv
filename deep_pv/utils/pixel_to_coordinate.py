@@ -54,6 +54,13 @@ def get_coords(lat_deg, lon_deg, zoom = 21, size = 30):
                             for i in range(size)])
                             .reshape(size,size,2))
 
+def get_coords_list(lat_deg, lon_deg, zoom = 21, size = 7):
+  (x,y) = deg2num(lat_deg, lon_deg, zoom)
+  return ([num2deg(x + i - size//2,
+            y + j - size//2, zoom)
+            for j in range(size)
+            for i in range(size)])
+
 def haversine_vectorized(start_lat,
                          start_lon,
                          end_lat,
