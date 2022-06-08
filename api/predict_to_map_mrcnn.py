@@ -93,7 +93,6 @@ def prediction_scores(lats, lons, image_names, results='', log = ''):
                 log.write(f"Loading areas of interest {j} from image: {image_names[i]}")
             scores.append({\
                 'name' : image_names[i],
-                'mask': (mask*1).tolist(),
                 'score': float(result[0]['scores'][j]),
                 'bb_latlon': bb_latlon['bounding box'],
                 'lat': float(bb_latlon['midpoint'][0]),
