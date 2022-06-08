@@ -8,6 +8,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import altair as alt
 import numpy as np
+import pydeck as pdk
+
+URL = 'http://127.0.0.1:8000/predict'
 
 # @st.cache
 # predict all images to a bucket and return the stuff.
@@ -43,20 +46,12 @@ if kpi:
 
 
 
-
-
-
-if clicked:
-    col1.pydeck_chart(map)
-
 # def load_api(url, params):
 #     r = requests.get(url, params)
 #     if r.status_code != 200:
 #         return None
 #     else:
 #         return r.json()
-
-# display_basemap()
 
 # if address and key:
 #     geolocator = Nominatim(user_agent="http")

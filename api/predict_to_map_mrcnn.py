@@ -6,6 +6,7 @@ from deep_pv.params import BUCKET_NAME
 from deep_pv.utils.test_output import test_results
 import streamlit as st
 import geopandas as gpd
+import pandas as pd
 
 # # Uncomment when running on intel
 # from tensorflow import keras, nn, expand_dims
@@ -37,7 +38,12 @@ def get_images_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV Present/'): #change 
 def make_map(lats, lons, bbs, points):
     """Display a map centered at the mean lat/lon of the query set."""
     # Adding code so we can have map default to the center of the data
+    bbs = pd.DataFrame(bbs)
+    points = pd.DataFrame(points)
+
+    print(bbs.head())
     midpoint = (np.average(lats), np.average(lons))
+    midpoint_sample = points.loc[1, 'lat'], points.loc[1, 'lon']
 
     initial_view_state=pdk.ViewState(
             latitude=midpoint[0],

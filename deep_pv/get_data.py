@@ -59,7 +59,6 @@ def upload_to_gcp(image, filename, image_type = 'jpg'):
     blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
 
 if __name__ =="__main__":
-
     print(download_weights())
     # # Load and print image
     # loaded_im = get_predict_image_gcp('51.906771_4.451552')
