@@ -5,27 +5,24 @@ from deep_pv.utils.results_processing import get_bb_latlon, get_real_mask_area
 from deep_pv.params import BUCKET_NAME
 from deep_pv.utils.test_output import test_results
 from deep_pv.get_data import get_image_names_gcp
-import streamlit as st
 import pandas as pd
-import geopandas as gpd
 
 # # Uncomment when running on intel
 # from tensorflow import keras, nn, expand_dims
 # from deep_pv.predict import get_model_locally
 
-def make_map(lats, lons, bbs, points):
+def make_map(bbs, points):
     """Display a map centered at the mean lat/lon of the query set."""
     # Adding code so we can have map default to the center of the data
     bbs = pd.DataFrame(bbs)
     points = pd.DataFrame(points)
 
     print(bbs.head())
-    midpoint = (np.average(lats), np.average(lons))
-    midpoint_sample = points.loc[1, 'lat'], points.loc[1, 'lon']
+    midpoint = (np.average(points.lat), np.average(points.lon))
 
     initial_view_state=pdk.ViewState(
-            latitude=midpoint_sample[0],
-            longitude=midpoint_sample[1],
+            latitude=midpoint[0],
+            longitude=midpoint[1],
             zoom=20)
 
     layer1 = pdk.Layer(
@@ -61,7 +58,7 @@ def make_map(lats, lons, bbs, points):
     labeled_map.to_html('test.html')
     return labeled_map
 
-def prediction_scores(lats, lons, image_names, log = ''):
+def prediction_scores(lats, lons, image_names, results='', log = ''):
     """
     Input images to do the prediction on.
     Returns a dictionary of scores with points that have gone through preprocessing,
@@ -70,8 +67,9 @@ def prediction_scores(lats, lons, image_names, log = ''):
     # # TODO: once docker file running; implement below logic and replace test results.
     # model = mrcnn_instantiate()
     # results = mrcnn_predict(model, image_names)
+    if results == '':
+        results = test_results()
 
-    results = test_results()
     scores = []
     for i, result in enumerate(results):
         n_annotations = len(result[0]['class_ids'])
@@ -87,6 +85,7 @@ def prediction_scores(lats, lons, image_names, log = ''):
             efficiency = 0.15
           ##radiation = get_monthly_average_irr(query) query = {'lat': 51.916667,'lon': 4.5}
             radiation = 88.93895833333335
+
             kWh_mon = area_corrected*radiation*efficiency
             print(f"Processing result {j} from image: {image_names[i]}")
 
@@ -94,14 +93,14 @@ def prediction_scores(lats, lons, image_names, log = ''):
                 log.write(f"Loading areas of interest {j} from image: {image_names[i]}")
             scores.append({\
                 'name' : image_names[i],
-                'mask': mask,
-                'score': result[0]['scores'][j],
+                'mask': (mask*1).tolist(),
+                'score': float(result[0]['scores'][j]),
                 'bb_latlon': bb_latlon['bounding box'],
-                'lat': bb_latlon['midpoint'][0],
-                'lon': bb_latlon['midpoint'][1],
-                'area': area,
-                'area_correction':area_corrected,
-                'kWh_mon':kWh_mon})
+                'lat': float(bb_latlon['midpoint'][0]),
+                'lon': float(bb_latlon['midpoint'][1]),
+                'area': float(area),
+                'area_correction':float(area_corrected),
+                'kWh_mon':float(kWh_mon)})
     return scores
 
 def scores_to_points(scores):
@@ -119,27 +118,35 @@ def scores_to_bb(scores):
         'confidence': s['score']
         } for s in scores ]
 
-def scores_to_shape(scores):
-    pass
-
-def predict_to_map(lats, lons, scores):
+def predict_to_map(scores):
     bbs = scores_to_bb(scores)
     points = scores_to_points(scores)
-    map = make_map(lats, lons, bbs, points)
+    map = make_map(bbs, points)
 
     return map
 
-def get_scores(bucket_name, log = ''):
+def get_scores(bucket_name,
+               prefix ='data/Rotterdam/PV Present/',
+               results = '',
+               log = ''):
+
+    """"
+    Put in bucket name, results file from the prediction.
+    Returns a list of lats, lons and preprocessed.
+    """
+
     if log:
         log.write("... getting files from GCP")
 
-    lats, lons, images = get_image_names_gcp(bucket_name)
-    scores = prediction_scores(lats, lons, images, log=log)
-    return lats, lons, scores
+    lats, lons, images = get_image_names_gcp(bucket_name,
+                                             prefix = prefix)
+
+    scores = prediction_scores(lats, lons, images, results=results, log=log)
+    return scores
 
 if __name__=="__main__":
     # TODO: check layertypes PyDeck
     bucket_name = BUCKET_NAME
-    lats, lons, scores = get_scores(bucket_name)
-    map = predict_to_map(lats, lons, scores)
+    scores = get_scores(bucket_name, prefix = 'data/Rotterdam/PV Present/', results = '')
+    map = predict_to_map(scores)
     pass
