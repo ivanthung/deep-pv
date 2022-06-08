@@ -29,33 +29,7 @@ if __name__ == "__main__":
 
     print(images)
 
-    info = {
-    "description": "PV-01 steel - converted to COCO by Ivan Thung",
-    "url": "https://essd.copernicus.org/preprints/essd-2021-270/essd-2021-270.pdf",
-    "version": "1",
-    "year": 2016,
-    "contributor": "....",
-    "date_created": "2022/06/07"
-    }
 
-    licenses = [
-    {
-        "url": "https://creativecommons.org/licenses/by/4.0/",
-        "id": 1,
-        "name": "Creative Commons Attribution 4.0 International License"
-    }]
-
-    categories =  [
-    {"supercategory": "panel","id": 1,"name": "panel"},
-    {"supercategory": "background","id": 2,"name": "background"}]
-
-    return {
-    "info": info,
-    "licenses": licenses,
-    "images": images,
-    "annotations": annotations,
-    "categories": categories, # Not in Captions annotations
-    }
 
 
 """

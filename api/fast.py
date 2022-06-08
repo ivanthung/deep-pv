@@ -13,10 +13,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import io
 
-# model = get_model_locally()
 graph = tf.get_default_graph()
 model = mrcnn_instantiate()
-
 
 app = FastAPI()
 
@@ -64,7 +62,7 @@ def predict(latitude, longitude):
     im = Image.fromarray(picture_stored)
     upload_to_gcp(im, f'{latitude}_{longitude}')
 
-
+    temp_bucket_name = BUCKET_NAME
     with graph.as_default():
         r = mrcnn_predict(model, picture_stored)
 
