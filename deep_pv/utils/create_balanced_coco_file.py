@@ -110,10 +110,8 @@ def main():
     print("finished dumping!")
 
 def test_coco_file():
-
     coco_json = COCO(ALL_DATA_DIR + 'COCO_all_fresno_balanced.json')
     print("Checking validadity of notations")
-
     for imId in coco_json.getImgIds():
         print("testing image with ID ", imId)
         assert coco_json.getAnnIds(imgIds=imId, catIds = [1]) != []
