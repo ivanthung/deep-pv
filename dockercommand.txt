@@ -1,4 +1,0 @@
-docker run \
-  -e GOOGLE_APPLICATION_CREDENTIALS=/home/tobyw/code/snowingg/gcp/deeppv-351812-aa17511b9e96.json \
-  -v $GOOGLE_APPLICATION_CREDENTIALS:/home/tobyw/code/snowingg/gcp/deeppv-351812-aa17511b9e96.json:ro \
-  gcr.io/deeppv-351812/deeptest
