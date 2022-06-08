@@ -1,21 +1,20 @@
-#import packages
-import os
 import pandas as pd
 import numpy as np
 from google.cloud import storage
-from tensorflow.keras import models
-from tensorflow import keras, nn, expand_dims
-from pathlib import Path
 import streamlit as st
-from deep_pv.predict import get_model_locally
 import pydeck as pdk
+from deep_pv.params import BUCKET_NAME
 
-BUCKET_NAME = "wagon-data-907-deeppv"
+# # Uncomment when running on intel
+# from tensorflow import keras, nn, expand_dims
+# from deep_pv.predict import get_model_locally
 
 @st.cache
-def get_images_gcp(BUCKET_NAME): #change to include variable for filename
-    prefix = f'data/Rotterdam/PV_Present/' #without coordinants
-    dl_dir = 'rotterdam_mary/'
+def get_images_gcp(BUCKET_NAME, prefix = 'data/Rotterdam/PV_Present/'): #change to include variable for filename
+    """" Inputs bucket name and prefix path from root of bucket:
+    example: data/Rotterdam/PV_Present
+    returns: lat, lon, and image names in a list fomr the"""
+
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(BUCKET_NAME)
     print(bucket)
@@ -23,7 +22,7 @@ def get_images_gcp(BUCKET_NAME): #change to include variable for filename
     print(blobs)
     lats = []
     lons = []
-    image_name = []
+    image_names = []
     for blob in blobs:
         name = blob.name[-22:]
         name = 'data/'+ name
@@ -31,14 +30,19 @@ def get_images_gcp(BUCKET_NAME): #change to include variable for filename
         lon = blob.name[-12:-4]
         lats.append(lat)
         lons.append(lon)
-        image_name.append(name)
+        image_names.append(name)
         blob.download_to_filename(name) #filename = 'data/lat_lon.jpg'
-    return lats, lons, image_name
+    return lats, lons, image_names
 
-def prediction_map(model, image_name):
+def prediction_map(model, image_names):
+    """
+    Takes a model and images names.
+    Returns a map
+    """
     image_class = []
     heat_score_list = []
-    for path in image_name:
+
+    for path in image_names:
       img = keras.utils.load_img(path, target_size=(256, 256))
       img_array = keras.utils.img_to_array(img)
       img_array = expand_dims(img_array, axis = 0)
@@ -52,9 +56,13 @@ def prediction_map(model, image_name):
       image_class.append(class_name)
       heat_score_list.append(heat_score)
     #   result_statement = "This image most likely belongs to {} with a {:.2f} percent confidence.".format(class_name, 100 * np.max(score))
-    return image_class, heat_score_list#, result_statement
+    return image_class, heat_score_list #, result_statement
 
-def make_dataset(image_class, heat_score_list,lat, lon, image_name):
+def make_dataset(image_class, heat_score_list, lat, lon, image_name):
+    """
+    Takes image classes, heat scores and lat lon
+    Returns a Dataframe
+    """
     image_dataset = pd.DataFrame({"image_name": image_name, "image_class": image_class , "heat_score_list":heat_score_list, "lat":lat, "lon":lon})
     return image_dataset
 
@@ -69,8 +77,6 @@ def make_map(image_dataset):
             latitude=midpoint[0],
             longitude=midpoint[1],
             zoom=11)
-
-
     layer1= pdk.Layer(
                 'HexagonLayer',
                 data=image_dataset,
@@ -92,10 +98,22 @@ def make_map(image_dataset):
     labeled_map = pdk.Deck(layers=[layer2], initial_view_state=initial_view_state)
     return st.pydeck_chart(labeled_map)
 
-
-
-if __name__=="__main__":
+def test_mary():
     lat,lon, image_name = get_images_gcp(BUCKET_NAME)
     model = get_model_locally()
     image_class, heat_score_list, result_statement = prediction_map(model, image_name)
     image_dataset = make_dataset(image_class, heat_score_list,lat, lon, image_name)
+    return
+
+
+def test_ivan():
+    lat,lon, image_name = get_images_gcp(BUCKET_NAME)
+    model = get_model_locally()
+    image_class, heat_score_list, result_statement = prediction_map(model, image_name)
+    image_dataset = make_dataset(image_class, heat_score_list,lat, lon, image_name)
+    return
+
+if __name__=="__main__":
+    test_ivan()
+
+    pass

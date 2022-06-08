@@ -4,11 +4,18 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 import os
+from os.path import join, dirname, abspath
+from dotenv import load_dotenv
+# import sys
+# sys.path.append(join(dirname(abspath(__file__)), ".."))
+
+env_path = join(dirname(abspath(__file__)),'../.env') # ../.env
+load_dotenv(env_path)
 
 def get_predict_image_gcp(file_name, image_type = 'jpg'):
     """Method to get one training file from google cloud bucket"""
 
-    client = storage.Client()
+    client = storage.Client.from_service_account_json(os.getenv("gcp_json_path"))
     blob_path = f'{BUCKET_TRAIN_DATA_PATH}/{file_name}.{image_type}'
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(blob_path)
@@ -25,7 +32,7 @@ def download_weights():
     """
 
     prefix = 'train_data/trained_weights/'
-    storage_client = storage.Client()
+    storage_client = storage.Client.from_service_account_json(os.getenv("gcp_json_path"))
     bucket = storage_client.get_bucket(BUCKET_NAME)
     blobs = bucket.list_blobs(prefix=prefix)  # Get list of files
 
@@ -43,7 +50,7 @@ def download_weights():
     return (WEIGHTS_PATH + download_name)
 
 def upload_to_gcp(image, filename, image_type = 'jpg'):
-    client = storage.Client()
+    client = storage.Client.from_service_account_json(os.getenv("gcp_json_path"))
     blob_path = f'{BUCKET_TRAIN_DATA_PATH}/{filename}.{image_type}'
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(blob_path)
@@ -52,7 +59,6 @@ def upload_to_gcp(image, filename, image_type = 'jpg'):
     blob.upload_from_string(img_byte_array.getvalue(), content_type="image/jpeg")
 
 if __name__ =="__main__":
-
     print(download_weights())
     # # Load and print image
     # loaded_im = get_predict_image_gcp('51.906771_4.451552')

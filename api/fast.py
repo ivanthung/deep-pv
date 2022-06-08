@@ -65,7 +65,6 @@ def predict(latitude, longitude):
     upload_to_gcp(im, f'{latitude}_{longitude}')
 
 
-    temp_bucket_name =
     with graph.as_default():
         r = mrcnn_predict(model, picture_stored)
 

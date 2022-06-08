@@ -86,7 +86,6 @@ def dump_images(img_dir, dump_location, coco_path):
     print(f'Dumped {image_name} at {dump_location}')
 
 def main():
-
     coco_filepath = DATA_DIR
     coco_filename = ['COCO_all_fresno_split.json']
     coco_filename_out = 'COCO_all_fresno_balanced.json'
@@ -111,10 +110,8 @@ def main():
     print("finished dumping!")
 
 def test_coco_file():
-
     coco_json = COCO(ALL_DATA_DIR + 'COCO_all_fresno_balanced.json')
     print("Checking validadity of notations")
-
     for imId in coco_json.getImgIds():
         print("testing image with ID ", imId)
         assert coco_json.getAnnIds(imgIds=imId, catIds = [1]) != []

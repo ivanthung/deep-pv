@@ -1,8 +1,6 @@
 import streamlit as st
 import requests
 from geopy.geocoders import Nominatim
-import matplotlib.pyplot as plt
-import numpy as np
 from PIL import Image
 from api.predict_to_map import get_images_gcp, get_model_locally, make_dataset, make_map, prediction_map
 from deep_pv.params import BUCKET_NAME
@@ -43,9 +41,6 @@ if address and key:
     }
     api_outcome = load_api(url,params)
     st.write(api_outcome['response'])
-
-    # array = np.array(api_outcome['picture'])
-    # fig = plt.
 
     image = Image.open(f'{latitude}_{longitude}.jpg')
     st.image(image, caption='Your Location')
