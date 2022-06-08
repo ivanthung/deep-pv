@@ -13,6 +13,7 @@ from google.cloud import storage
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import io
+from api.predict_to_map_mrcnn import get_scores
 
 graph = tf.get_default_graph()
 model = mrcnn_instantiate()
@@ -58,7 +59,7 @@ def predict(latitude, longitude):
             'solar_present': solar_present}
 
 @app.get("/hood")
-def hood(latitude, longitude, zoom, size, key):
+def hood(latitude, longitude, key, zoom = 21, size = 7):
     latitude = round(float(latitude), 6)
     longitude = round(float(longitude), 6)
     size = int(size)
@@ -76,4 +77,15 @@ def hood(latitude, longitude, zoom, size, key):
         picture_stored = cv.cvtColor(cv.imdecode(np.asarray(bytearray(picture.content), dtype="uint8"),cv.IMREAD_COLOR), cv.COLOR_BGR2RGB)
         im = Image.fromarray(picture_stored)
         upload_to_gcp_hood(im, f'{latitude}_{longitude}', f'{lat}_{long}')
-    return {'a':f'{lat}_{long}'}
+
+    prefix = f'data/hood/{latitude}_{longitude}/'
+    with graph.as_default():
+        results = mrcnn_predict(model, prefix)
+    scores = get_scores(BUCKET_NAME,prefix,results)
+
+    solar_present = 1
+    if len(scores) == 0:
+        solar_present = 0
+
+    return {'results': scores,
+            'solar_present': solar_present}
