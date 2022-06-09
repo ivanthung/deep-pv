@@ -32,7 +32,7 @@ def index():
     return {"greeting": "Hello world!"}
 
 
-@app.get("/predict")
+# @app.get("/predict")
 # def predict(latitude, longitude):
 #     url = "https://maps.googleapis.com/maps/api/staticmap?"
 #     picture = requests.get(url,params = {
