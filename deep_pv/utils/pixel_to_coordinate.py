@@ -1,15 +1,15 @@
 import math
 import numpy as np
 
-def deg2num(lat_deg, lon_deg, zoom):
+def deg2num(lat_deg, lon_deg, zoom=21):
   lat_rad = math.radians(lat_deg)
-  n = 2.0 ** zoom
+  n = 2.0 ** (zoom-1)
   xtile = int((lon_deg + 180.0) / 360.0 * n)
   ytile = int((1.0 - math.asinh(math.tan(lat_rad)) / math.pi) / 2.0 * n)
   return (xtile, ytile)
 
-def num2deg(xtile, ytile, zoom):
-  n = 2.0 ** zoom
+def num2deg(xtile, ytile, zoom=21):
+  n = 2.0 ** (zoom-1)
   lon_deg = xtile / n * 360.0 - 180.0
   lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
   lat_deg = math.degrees(lat_rad)
@@ -46,26 +46,22 @@ def center_to_pixel(lat, long, x, y, size = 512, zoom = 21):
     long_x = (x/size)*(corners['bottom_right'][1] - corners['top_left'][1]) + corners['top_left'][1]
     return lat_y, long_x
 
-def get_coords(lat_deg, lon_deg, zoom = 21, size = 30):
-  (x,y) = deg2num(lat_deg, lon_deg, zoom)
-  return (np.array([num2deg(x + i - size//2,
-                            y + j - size//2, zoom)
-                            for j in range(size)
-                            for i in range(size)])
-                            .reshape(size,size,2))
+def center_input_deg(lat,long,zoom=21):
+  nums = deg2num(lat, long, zoom)
+  return num2deg(nums[0]+0.5, nums[1]+0.5, zoom)
 
-def get_coords_list(lat_deg, lon_deg, zoom = 21, size = 7):
-  (x,y) = deg2num(lat_deg, lon_deg, zoom)
-  return ([num2deg(x + i - size//2,
-            y + j - size//2, zoom)
-            for j in range(size)
-            for i in range(size)])
+def get_coords(lat_deg, lon_deg, zoom = 21, size = 4):
+    (x,y) = deg2num(lat_deg, lon_deg, zoom)
+    return ([num2deg(x + i - size//2 + 0.5,
+                     y + j - size//2 + 0.5, zoom)
+                     for j in range(size)
+                     for i in range(size)])
 
 def get_coords_fixed(lat_deg, lon_deg, zoom = 21, size = 7):
   (x,y) = deg2num(lat_deg, lon_deg, zoom)
   size1 = np.int64(2 * size)
   a = (np.array([num2deg(x + i - size1//2,
-                            y + j - 1//2, zoom)
+                            y + j - size1//2, zoom)
                             for j in range(size1)
                             for i in range(size1)])
                             .reshape(size1,size1,2))
