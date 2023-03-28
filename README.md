@@ -1,74 +1,19 @@
-# Data analysis
-- Document here the project: deep-pv
-- Description: Project Description
-- Data Source:
-- Type of analysis:
+# DEEP-V
+## Streamlit Interface
+A streamlit interface gives the user the possibility select a city area and run the model.
+The model returns the outlines and m2 of solar panels.
+It also calculates the amount of wattage that potentially is produced by the panels. 
 
-Please document the project the better you can.
+## FastAPI
+The streamlit interface calls an fast API interface gets requests for a set of coordinates and then:
+- Downloads images in tiles from a google maps API.
+- Saves them on GCP.
+- Runs inference on them.
+- Calculates KPIs
 
-# Startup the project
+## Trained model
+It contains a trained MRCNN model trained on Solar Panels in California and China. 
+Images were converted to COCO format for training the model.
+The model can either be accessed locally or on GCP. 
 
-The initial setup.
-
-Create virtualenv and install the project:
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv ~/venv ; source ~/venv/bin/activate ;\
-    pip install pip -U; pip install -r requirements.txt
-```
-
-Unittest test:
-```bash
-make clean install test
-```
-
-Check for deep-pv in gitlab.com/{group}.
-If your project is not set please add it:
-
-- Create a new project on `gitlab.com/{group}/deep-pv`
-- Then populate it:
-
-```bash
-##   e.g. if group is "{group}" and project_name is "deep-pv"
-git remote add origin git@github.com:{group}/deep-pv.git
-git push -u origin master
-git push -u origin --tags
-```
-
-Functionnal test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-deep-pv-run
-```
-
-# Install
-
-Go to `https://github.com/{group}/deep-pv` to see the project, manage issues,
-setup you ssh public key, ...
-
-Create a python3 virtualenv and activate it:
-
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
-```
-
-Clone the project and install it:
-
-```bash
-git clone git@github.com:{group}/deep-pv.git
-cd deep-pv
-pip install -r requirements.txt
-make clean install test                # install and test
-```
-Functionnal test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-deep-pv-run
-```
+*** This documentation is very incomplete and part of a rushed project ***
